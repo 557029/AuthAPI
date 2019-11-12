@@ -8,9 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 @Slf4j
 public class MccAuthServiceImpl implements MccAuthService {
@@ -35,13 +32,5 @@ public class MccAuthServiceImpl implements MccAuthService {
         MccCustomerDTO customerDTO =  this.restTemplate.getForObject(urlCust, MccCustomerDTO.class);
         log.info(customerDTO.getUsername());
         return customerDTO;
-    }
-
-    @Override
-    public List<MccEventDTO> getListEvents() {
-        final String url = this.databaseServiceUrl + "/listevents";
-        final List<MccEventDTO> list = this.restTemplate.getForObject(url, ArrayList.class);
-        log.info("Extracted: " + list.size());
-        return list;
     }
 }

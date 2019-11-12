@@ -2,9 +2,13 @@ package com.bah.mcc.authenticator.api;
 
 import com.bah.mcc.authenticator.dataaccess.MccCustomerDTO;
 import com.bah.mcc.authenticator.dataaccess.MccEventDTO;
+import com.bah.mcc.authenticator.dataaccess.MccRegistrationDTO;
 import com.bah.mcc.authenticator.jwt.Token;
 import com.bah.mcc.authenticator.jwt.TokenRequestData;
 import com.bah.mcc.authenticator.service.MccAuthService;
+import com.bah.mcc.authenticator.service.MccCustomerService;
+import com.bah.mcc.authenticator.service.MccEventService;
+import com.bah.mcc.authenticator.service.MccRegistrationService;
 import com.bah.mcc.authenticator.util.JWTHelper;
 import com.bah.mcc.authenticator.util.JWTUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -25,21 +29,42 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:*")
 public class AuthRestController {
     private MccAuthService mccAuthService;
-    JWTUtil jwtUtil = new JWTHelper();
+    private MccEventService mccEventService;
+    private MccCustomerService mccCustomerService;
+    private MccRegistrationService mccRegistrationService;
+
+    private JWTUtil jwtUtil = new JWTHelper();
 
     @Autowired
     public void setMccAuthService(MccAuthService mccAuthService) {
         this.mccAuthService = mccAuthService;
     }
 
+    @Autowired
+    public void setMccEventService(MccEventService mccEventService) {
+        this.mccEventService = mccEventService;
+    }
+
+    @Autowired
+    public void setMccCustomerService(MccCustomerService mccCustomerService) {
+        this.mccCustomerService = mccCustomerService;
+    }
+
+    @Autowired
+    public void setMccRegistrationService(MccRegistrationService mccRegistrationService) {
+        this.mccRegistrationService = mccRegistrationService;
+    }
+
     @RequestMapping(value = "/customer"
             , produces = MediaType.APPLICATION_JSON_VALUE
             , method = RequestMethod.GET)
     public MccCustomerDTO consumeUserInfo(@RequestBody MccCustomerDTO customer) {
-        return this.mccAuthService.getMccCustomerDTO(customer);
+        return this.mccCustomerService.save(customer);
     }
 
-    @RequestMapping(value = "customer"
+    //todo SignUp customer method was not implemented
+
+    @RequestMapping(value = "/login"
             , produces = MediaType.APPLICATION_JSON_VALUE
             , consumes = MediaType.APPLICATION_JSON_VALUE
             , method = RequestMethod.POST)
@@ -57,13 +82,35 @@ public class AuthRestController {
         }
         // bad request
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-
     }
 
     @RequestMapping(value = "/listevents",
             produces = MediaType.APPLICATION_JSON_VALUE,
             method = RequestMethod.GET)
     public List<MccEventDTO> getListOfEvents() {
-        return this.mccAuthService.getListEvents();
+        return this.mccEventService.getListOfEvents();
+    }
+    @RequestMapping(value = "/customers",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            method = RequestMethod.GET)
+    public List<MccCustomerDTO> getListCustomers() {
+        return this.mccCustomerService.getListCustomers();
+    }
+
+    @RequestMapping(value = "/registrations", method = RequestMethod.GET)
+    public List<MccRegistrationDTO> getAllRegistrations() {
+        return this.mccRegistrationService.getListOfAllRegistrations();
+    }
+
+
+
+    @RequestMapping(value = "/registration", method = RequestMethod.POST)
+    public ResponseEntity<MccRegistrationDTO> createRegistration(@RequestBody MccRegistrationDTO registrationDTO) {
+        this.mccRegistrationService.save(registrationDTO);
+        MccRegistrationDTO reg = this.mccRegistrationService.getRegistration(registrationDTO.getCustomerId(), registrationDTO.getEventId());
+        if(reg == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(reg);
     }
 }
