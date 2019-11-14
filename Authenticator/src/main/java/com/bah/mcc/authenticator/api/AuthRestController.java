@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -101,6 +102,14 @@ public class AuthRestController {
     public List<MccCustomerDTO> getListCustomers() {
         return this.mccCustomerService.getListCustomers();
     }
+
+    @RequestMapping(value = "/customer/{username}",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            method = RequestMethod.GET)
+    public MccCustomerDTO getListCustomer(@PathVariable String username) {
+        return this.mccCustomerService.getCustomer(username);
+    }
+
 
     @RequestMapping(value = "/registrations", method = RequestMethod.GET)
     public List<MccRegistrationDTO> getAllRegistrations() {

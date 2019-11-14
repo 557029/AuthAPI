@@ -32,7 +32,7 @@ public class MccCustomerServiceImpl implements MccCustomerService {
 
     @Override
     public MccCustomerDTO getCustomer(String username) {
-        final String url = this.databaseServiceUrl + "/customers/%s";
+        final String url = this.databaseServiceUrl + "/customer/%s";
         final MccCustomerDTO customer = this.restTemplate.getForObject(String.format(url, username), MccCustomerDTO.class);
         log.info("Get Customer: " + customer != null ? customer.getUsername() : "Null");
         return customer;
