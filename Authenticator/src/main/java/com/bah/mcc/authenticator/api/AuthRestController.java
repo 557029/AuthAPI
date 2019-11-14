@@ -87,8 +87,13 @@ public class AuthRestController {
     @RequestMapping(value = "/listevents",
             produces = MediaType.APPLICATION_JSON_VALUE,
             method = RequestMethod.GET)
-    public List<MccEventDTO> getListOfEvents() {
-        return this.mccEventService.getListOfEvents();
+    public ResponseEntity<List<MccEventDTO>> getListOfEvents() {
+        List<MccEventDTO> list = this.mccEventService.getListOfEvents();
+        if(list != null && list.size() > 0) {
+            return ResponseEntity.ok(list);
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
     @RequestMapping(value = "/customers",
             produces = MediaType.APPLICATION_JSON_VALUE,
