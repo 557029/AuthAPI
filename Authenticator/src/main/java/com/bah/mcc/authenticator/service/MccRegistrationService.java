@@ -7,7 +7,7 @@ import java.util.List;
 public interface MccRegistrationService {
     MccRegistrationDTO save(MccRegistrationDTO registration);
     List<MccRegistrationDTO> getListOfAllRegistrations();
-    List<MccRegistrationDTO> getListOfCustomerRegistrations(Long custId);
+    List<MccRegistrationDTO> getListOfCustomerRegistrations(String username);
     MccRegistrationDTO getRegistration(Long custId, Long eventId);
 
 }

@@ -59,7 +59,7 @@ public class AuthRestController {
             , produces = MediaType.APPLICATION_JSON_VALUE
             , method = RequestMethod.GET)
     public MccCustomerDTO consumeUserInfo(@RequestBody MccCustomerDTO customer) {
-        return this.mccCustomerService.save(customer);
+        return this.mccCustomerService.save(customer, false);
     }
 
     //todo SignUp customer method was not implemented

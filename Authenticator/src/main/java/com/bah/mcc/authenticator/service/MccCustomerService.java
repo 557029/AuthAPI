@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface MccCustomerService {
     List<MccCustomerDTO> getListCustomers();
-    MccCustomerDTO save(MccCustomerDTO customerDTO);
+    MccCustomerDTO save(MccCustomerDTO customerDTO, boolean newcustomer);
+    MccCustomerDTO getCustomer(String username);
 }
