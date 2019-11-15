@@ -56,13 +56,6 @@ public class AuthRestController {
         this.mccRegistrationService = mccRegistrationService;
     }
 
-    @RequestMapping(value = "/customer"
-            , produces = MediaType.APPLICATION_JSON_VALUE
-            , method = RequestMethod.GET)
-    public MccCustomerDTO consumeUserInfo(@RequestBody MccCustomerDTO customer) {
-        return this.mccCustomerService.save(customer, false);
-    }
-
     //todo SignUp customer method was not implemented
 
     @RequestMapping(value = "/login"
@@ -103,6 +96,39 @@ public class AuthRestController {
         return this.mccCustomerService.getListCustomers();
     }
 
+    @RequestMapping(value = "/customer"
+            , produces = MediaType.APPLICATION_JSON_VALUE
+            , method = RequestMethod.GET)
+    public MccCustomerDTO getUserInfo(@RequestBody MccCustomerDTO customer) {
+        return this.mccCustomerService.getCustomer(customer.getUsername());
+    }
+
+
+    @RequestMapping(value = "/customer",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            method = RequestMethod.POST)
+    public MccCustomerDTO createCustomer(@RequestBody MccCustomerDTO customerDTO) {
+        final ResponseEntity<MccCustomerDTO> responseEntity = this.mccCustomerService.save(customerDTO, true);
+        if(responseEntity.getStatusCode().equals(HttpStatus.OK)) {
+            return responseEntity.getBody();
+        }
+        return null;
+    }
+
+    @RequestMapping(value = "/customer",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            method = RequestMethod.PUT)
+    public MccCustomerDTO updateCustomer(@RequestBody MccCustomerDTO customerDTO) {
+        final ResponseEntity<MccCustomerDTO> responseEntity = this.mccCustomerService.save(customerDTO, false);
+        if(responseEntity.getStatusCode().equals(HttpStatus.OK)) {
+            return responseEntity.getBody();
+        }
+        return null;
+    }
+
+
     @RequestMapping(value = "/customer/{username}",
             produces = MediaType.APPLICATION_JSON_VALUE,
             method = RequestMethod.GET)
@@ -115,8 +141,6 @@ public class AuthRestController {
     public List<MccRegistrationDTO> getAllRegistrations() {
         return this.mccRegistrationService.getListOfAllRegistrations();
     }
-
-
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public ResponseEntity<MccRegistrationDTO> createRegistration(@RequestBody MccRegistrationDTO registrationDTO) {

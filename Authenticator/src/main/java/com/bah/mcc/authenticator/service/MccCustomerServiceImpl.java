@@ -2,8 +2,14 @@ package com.bah.mcc.authenticator.service;
 
 import com.bah.mcc.authenticator.dataaccess.MccCustomerDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -39,15 +45,20 @@ public class MccCustomerServiceImpl implements MccCustomerService {
     }
 
     @Override
-    public MccCustomerDTO save(MccCustomerDTO customerDTO, boolean newcustomer) {
+    public ResponseEntity<MccCustomerDTO> save(MccCustomerDTO customerDTO, boolean newcustomer) {
         final String url = this.databaseServiceUrl + "/customer";
-        MccCustomerDTO customer = null;
         if(newcustomer) {
             // Trying to save a customer
             this.restTemplate.postForObject(url, customerDTO, MccCustomerDTO.class);
-            // Getting customer info
-            customer = this.getCustomer(customerDTO.getUsername());
+        } else {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<MccCustomerDTO> entity = new HttpEntity<>(headers);
+            //this.restTemplate.exchange(url + "/" + customerDTO.getUsername(), HttpMethod.PUT, entity, MccCustomerDTO.class, customerDTO);
+            this.restTemplate.put(url + "/" + customerDTO.getUsername(), customerDTO, MccCustomerDTO.class);
         }
-        return customer;
+        // Getting updated customer Info
+        final MccCustomerDTO customer = this.getCustomer(customerDTO.getUsername());
+        return ResponseEntity.ok(customer);
     }
 }
